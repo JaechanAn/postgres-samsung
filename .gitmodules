@@ -1,3 +1,6 @@
 [submodule "postgres"]
 	path = postgres
 	url = https://github.com/JaechanAn/postgres.git
+[submodule "sysbench"]
+	path = sysbench
+	url = https://github.com/akopytov/sysbench.git
