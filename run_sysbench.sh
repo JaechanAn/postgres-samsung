@@ -34,7 +34,7 @@ CREATE_SECONDARY=false
 WARMUP_TIME=0
 RAND_TYPE=zipfian
 RAND_ZIPFIAN_EXP=0.0
-LUA=oltp_update_non_index.lua
+LUA="${SYSBENCH_DIR}/src/lua/oltp_update_non_index.lua"
 
 # Parse parameters
 for i in "$@"
@@ -77,10 +77,10 @@ if [[ "${CLEANUP}" == "YES" ]]
 then
     ${SYSBENCH_SCRIPT} \
       --sysbench-dir=${SYSBENCH_DIR} \
-      --user=${USER} \
-      --host=localhost \
-      --port=${PORT} \
-      --db=${DATABASE} \
+      --pgsql-user=${USER} \
+      --pgsql-host=localhost \
+      --pgsql-port=${PORT} \
+      --pgsql-db=${DATABASE} \
       --table-size=${TABLE_SIZE} \
       --tables=${TABLES} \
       --time=${TIME} \
@@ -100,10 +100,10 @@ if [[ "${PREPARE}" == "YES" ]]
 then
     ${SYSBENCH_SCRIPT} \
       --sysbench-dir=${SYSBENCH_DIR} \
-      --user=${USER} \
-      --host=localhost \
-      --port=${PORT} \
-      --db=${DATABASE} \
+      --pgsql-user=${USER} \
+      --pgsql-host=localhost \
+      --pgsql-port=${PORT} \
+      --pgsql-db=${DATABASE} \
       --table-size=${TABLE_SIZE} \
       --tables=${TABLES} \
       --time=${TIME} \
