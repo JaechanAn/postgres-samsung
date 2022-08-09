@@ -5,6 +5,7 @@ if [[ "$1" == "-h" ]]; then
   echo "  --install   install sysbench from source"
   echo "  --cleanup   cleanup sysbench"
   echo "  --prepare   prepare sysbench"
+  echo "  --run       run sysbench"
   exit 0
 fi
 
@@ -26,7 +27,7 @@ PORT=5678 # If you change the port, you must change the postgresql.conf file in 
 
 TABLE_SIZE=100000
 TABLES=3
-TIME=60
+TIME=3600
 THREADS=4
 REPORT_INTERVAL=1
 SECONDARY=off
@@ -55,6 +56,11 @@ do
       shift
       ;;
 
+    --run)
+      RUN=YES
+      shift
+      ;;
+
     *)
       # unknown option
       ;;
@@ -64,6 +70,7 @@ done
 echo "INSTALL = ${INSTALL}"
 echo "CLEANUP = ${CLEANUP}"
 echo "PREPARE = ${PREPARE}"
+echo "RUN     = ${RUN}"
 
 # Install Sysbench
 if [[ "${INSTALL}" == "YES" ]]
@@ -116,4 +123,27 @@ then
       --rand-zipfian-exp=${RAND_ZIPFIAN_EXP} \
       --lua=${LUA} \
       --mode=prepare
+fi
+
+# Run Sysbench
+if [[ "${RUN}" == "YES" ]]
+then
+    ${SYSBENCH_SCRIPT} \
+      --sysbench-dir=${SYSBENCH_DIR} \
+      --pgsql-user=${USER} \
+      --pgsql-host=localhost \
+      --pgsql-port=${PORT} \
+      --pgsql-db=${DATABASE} \
+      --table-size=${TABLE_SIZE} \
+      --tables=${TABLES} \
+      --time=${TIME} \
+      --threads=${THREADS} \
+      --report-interval=${REPORT_INTERVAL} \
+      --secondary=${SECONDARY} \
+      --create-secondary=${CREATE_SECONDARY} \
+      --warmup-time=${WARMUP_TIME} \
+      --rand-type=${RAND_TYPE} \
+      --rand-zipfian-exp=${RAND_ZIPFIAN_EXP} \
+      --lua=${LUA} \
+      --mode=run
 fi
