@@ -19,8 +19,8 @@ do
       shift
       ;;
 
-    --configfile=*)
-      CONFIGFILE="${i#*=}"
+    --config-file=*)
+      CONFIG_FILE="${i#*=}"
       shift
       ;;
 
@@ -34,6 +34,5 @@ done
 rm -rf ${DATA_DIR}
 ${BIN_DIR}/initdb -D ${DATA_DIR}
 
-echo ${CONFIGFILE}
-cp ${CONFIGFILE} ${DATA_DIR}
+cp ${CONFIG_FILE} ${DATA_DIR}
 

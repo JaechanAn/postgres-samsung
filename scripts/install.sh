@@ -24,13 +24,13 @@ do
       shift
       ;;
 
-    --configure)
-      CONFIGURE=YES
+    --gdb)
+      GDB=YES
       shift
       ;;
 
-    --gdb)
-      GDB=YES
+    --extension-dir=*)
+      EXTENSION_DIR="${i#*=}"
       shift
       ;;
 
@@ -39,25 +39,29 @@ do
       ;;
   esac
 done
+
 # GDB
 if [ "${GDB}"=="YES" ]
 then
-  COMPILE_OPTION="${COMPILE_OPTION} -ggdb -Og -g3 -fno-omit-frame-pointer"
+  COMPILE_OPTION="${COMPILE_OPTION} -O0 -g -fno-omit-frame-pointer"
 fi
 
 # Postgres source directory
 cd ${SRC_DIR}
 
 # Cleanup
-make clean -j2 -s
+make clean -j4 --silent
 
 # Configure
-if [ ${CONFIGURE}==YES ]
-then
-  ./configure --silent --prefix=${INSTALL_DIR} --enable-cassert --enable-debug CFLAGS="${COMPILE_OPTION}"
-fi
+./configure --silent --prefix=${INSTALL_DIR} --enable-cassert --enable-debug CFLAGS="${COMPILE_OPTION}"
 
-# Build & Install
-make -j2 -s
-make install -j2 -s
+# Build & Install PostgreSQL
+make -j4 --silent
+make install -j4 --silent
+
+# Build & Install Extensions
+cd ${EXTENSION_DIR}
+
+make -j4 --silent
+make install -j4 --silent
 

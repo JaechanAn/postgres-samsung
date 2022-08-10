@@ -14,13 +14,13 @@ do
       shift
       ;;
 
-    --port=*)
-      PORT="${i#*=}"
+    --host=*)
+      HOST="${i#*=}"
       shift
       ;;
 
-    --file=*)
-      FILE="${i#*=}"
+    --port=*)
+      PORT="${i#*=}"
       shift
       ;;
 
@@ -36,6 +36,5 @@ do
 done
 
 # Create User & Database
-${BIN_DIR}/createuser ${USER} -d -h localhost -p ${PORT} -U $(whoami) -w
-${BIN_DIR}/createdb -O ${USER} -h localhost -p ${PORT} -U ${USER} -w ${DATABASE}
-
+${BIN_DIR}/createuser ${USER} -d -h ${HOST} -p ${PORT} -U $(whoami) -w
+${BIN_DIR}/createdb -O ${USER} -h ${HOST} -p ${PORT} -U ${USER} -w ${DATABASE}

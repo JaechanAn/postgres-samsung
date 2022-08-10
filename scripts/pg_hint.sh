@@ -9,11 +9,6 @@ do
       shift
       ;;
 
-    --user=*)
-      USER="${i#*=}"
-      shift
-      ;;
-
     --port=*)
       PORT="${i#*=}"
       shift
@@ -30,5 +25,6 @@ do
   esac
 done
 
-# Connect Client
-${BIN_DIR}/psql -p ${PORT} -d ${DATABASE} -U ${USER}
+QUERY+="LOAD 'pg_hint_plan';"
+QUERY+="CREATE EXTENSION pg_hint_plan;"
+echo ${QUERY} | ${BIN_DIR}/psql -p ${PORT} -d ${DATABASE}

@@ -25,7 +25,7 @@ do
   esac
 done
 
-rm $LOGFILE
+rm ${LOGFILE}
 
 # Server start
 ${BIN_DIR}/pg_ctl -D ${DATA_DIR} -l ${LOGFILE} start

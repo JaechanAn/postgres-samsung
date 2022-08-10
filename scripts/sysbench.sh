@@ -4,8 +4,8 @@
 for i in "$@"
 do
   case $i in
-    --sysbench-dir=*)
-      SYSBENCH_DIR="${i#*=}"
+    --src-dir=*)
+      SRC_DIR="${i#*=}"
       shift
       ;;
 
@@ -105,7 +105,8 @@ do
   esac
 done
 
-cd ${SYSBENCH_DIR}
+cd ${SRC_DIR}
+cd ../
 
 ./src/sysbench \
     --pgsql-user=${USER} \
@@ -114,7 +115,7 @@ cd ${SYSBENCH_DIR}
     --pgsql-db=${DB} \
     --table-size=${TABLE_SIZE} \
     --tables=${TABLES} \
-    --time=${TIME} \
+    --time=`expr ${TIME} - ${TIME_OLAP_ONLY}` \
     --threads=${THREADS} \
     --report-interval=${REPORT_INTERVAL} \
     --secondary=${SECONDARY} \
