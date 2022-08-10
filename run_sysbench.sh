@@ -26,9 +26,9 @@ DATABASE=${USER}
 PORT=5678 # If you change the port, you must change the postgresql.conf file in config directory
 
 TABLE_SIZE=100000
-TABLES=3
+TABLES=12
 TIME=3600
-THREADS=4
+THREADS=12
 REPORT_INTERVAL=1
 SECONDARY=off
 CREATE_SECONDARY=false
