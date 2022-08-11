@@ -493,7 +493,7 @@ if __name__ == '__main__':
     sysbc_parser.add_argument('--time', type=int, default=300, help='total execution time')
     sysbc_parser.add_argument('--threads', type=int, default=12, help='number of threads')
     sysbc_parser.add_argument('--tables', type=int, default=12, help='number of tables')
-    sysbc_parser.add_argument('--join-tables', type=int, default=4, help='number of tables to join for each query')
+    sysbc_parser.add_argument('--join-tables', type=int, default=6, help='number of tables to join for each query')
     sysbc_parser.add_argument('--table-size', type=int, default=100000, help='sysbench table size')
     sysbc_parser.add_argument('--warmup-time', type=int, default=0, help='sysbench warmup time')
     sysbc_parser.add_argument('--rand-type', default='zipfian')
@@ -510,8 +510,8 @@ if __name__ == '__main__':
 
     options_parser.add_argument('--time-olap-only', type=int, default=0, help='OLAP exclusive time')
     options_parser.add_argument('--time-oltp-only', type=int, default=0, help='OLTP exclusive time')
-    options_parser.add_argument('--num-short-olap', type=int, default=10, help='# of OLAP queries w\o autocommit')
-    options_parser.add_argument('--num-long-olap', type=int, default=10, help='# of OLAP queries w\ autocommit')
+    options_parser.add_argument('--num-short-olap', type=int, default=1, help='# of OLAP queries w\o autocommit')
+    options_parser.add_argument('--num-long-olap', type=int, default=1, help='# of OLAP queries w\ autocommit')
     options_parser.add_argument('--selectivity', type=float, default=0.1, help='predicate for selectivity')
 
     args=parser.parse_args()
