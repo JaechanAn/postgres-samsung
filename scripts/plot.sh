@@ -29,6 +29,11 @@ do
       shift
       ;;
 
+    --tps-file=*)
+      TPS_FILE="${i#*=}"
+      shift
+      ;;
+
     --eps-file=*)
       EPS_FILE="${i#*=}"
       shift
@@ -40,5 +45,5 @@ do
   esac
 done
 
-gnuplot -c ${GPI} ${EPS_FILE} ${LATENCY_SHORT_FILE} ${LATENCY_LONG_FILE} ${TEMP_FILE} ${SPACE_FILE}
+gnuplot -c ${GPI} ${EPS_FILE} ${LATENCY_SHORT_FILE} ${LATENCY_LONG_FILE} ${TEMP_FILE} ${SPACE_FILE} ${TPS_FILE}
 

@@ -456,6 +456,7 @@ def run_exp(args, mode):
               '--latency-short-file={}'.format(short_client[0].result_file),
               '--latency-long-file={}'.format(long_client[0].result_file),
               '--temp-file={}'.format(temp_file),
+              '--tps-file={}'.format(tps_file),
               '--space-file={}'.format(space_file)]
     run_script(plot_script, params, desc='Plot data')
 
