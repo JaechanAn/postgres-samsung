@@ -137,22 +137,14 @@ class Client(threading.Thread):
         self.cursor.execute('SET enable_mergejoin = off;')
         self.cursor.execute('SET enable_nestloop = off;')
         self.cursor.execute('SET enable_hashjoin = on;')
-        #self.cursor.execute('SET enable_bitmapscan = off;')
-        #self.cursor.execute('SET enable_indexscan = on;')
-        #self.cursor.execute('SET enable_indexonlyscan = off;')
-        #self.cursor.execute('SET enable_tidscan = off;')
+        self.cursor.execute('SET enable_bitmapscan = off;')
+        self.cursor.execute('SET enable_indexscan = off;')
+        self.cursor.execute('SET enable_indexonlyscan = off;')
+        self.cursor.execute('SET enable_tidscan = off;')
         self.cursor.execute('SET enable_seqscan = on;')
 
         with open(self.result_file, 'w') as f:
             epoch = time.perf_counter()
-
-            start_time = time.perf_counter()
-            query = self.make_query()
-            self.cursor.execute(query)
-            self.cursor.fetchall()
-            end_time = time.perf_counter()
-
-            first_time = end_time - start_time
 
             while not self.end: # ends looping in terminate()
                 start_time = time.perf_counter()
@@ -193,7 +185,7 @@ class Client(threading.Thread):
                 ['{} = {}'.format(where_stmt[i], where_stmt[i+1]) \
                 for i in range(len(where_stmt) - 1)]
         where_stmt = ' and '.join(where_stmt)
-        if self.client_id == 0 and self.autocommit == False:
+        if self.client_id == 0:
             where_stmt = '{} and {}'.format(where_stmt, predicate)
 
         query = 'SELECT {} FROM {} WHERE {};'.format(select_stmt, from_stmt, where_stmt)
@@ -294,6 +286,37 @@ class TempSpillChecker(threading.Thread):
                 user=self.args.pgsql_user,
                 port=self.args.pgsql_port)
 
+# Space checker for temp file size
+class TempChecker(threading.Thread):
+    def __init__(self, result_file, data_dir, args):
+        threading.Thread.__init__(self)
+
+        self.result_file = result_file
+        self.data_dir = data_dir
+        self.args = args
+
+        self.end = False
+
+    def terminate(self):
+        if self.end is False:
+            self.end = True
+
+    def run(self):
+        with open(self.result_file, 'w') as f:
+            epoch = time.perf_counter()
+
+            while not self.end: # ends looping in terminate()
+                current_time = time.perf_counter()
+
+                try:
+                    data_size = int(str(subprocess.check_output([f'du -sb {self.data_dir}/base/pgsql_tmp'], shell=True).decode('utf-8')).split()[0])
+                except:
+                    data_size = 0
+
+                results = f'{(current_time - epoch):.3f} {data_size}\n'
+                f.write(results)
+                f.flush()
+                time.sleep(1)
 
 def run_exp(args, mode):
     # Directory paths
@@ -400,7 +423,8 @@ def run_exp(args, mode):
     # Sysbench
     sys_worker = SysbenchWorker(sysbench_script=sysbench_script, sysbench_dir=sysbench_dir, result_file=sysbench_file, args=args)
     space_checker = SpaceChecker(result_file=space_file, data_dir=data_dir, args=args)
-    temp_checker = TempSpillChecker(result_file=temp_file, args=args)
+    #temp_checker = TempSpillChecker(result_file=temp_file, args=args)
+    temp_checker = TempChecker(result_file=temp_file, data_dir=data_dir, args=args)
     short_client = [Client(client_id=i, autocommit=True, result_file=os.path.join(result_dir, f'latency_short_{i}.data'), args=args) \
             for i in range(0, args.num_short_olap)]
     long_client = [Client(client_id=i, autocommit=False, result_file=os.path.join(result_dir, f'latency_long_{i}.data'), args=args) \
@@ -491,9 +515,9 @@ if __name__ == '__main__':
     sysbc_parser.add_argument('--secondary', default='off', help='default off')
     sysbc_parser.add_argument('--create-secondary', default='false', help='default = false')
     sysbc_parser.add_argument('--time', type=int, default=300, help='total execution time')
-    sysbc_parser.add_argument('--threads', type=int, default=12, help='number of threads')
+    sysbc_parser.add_argument('--threads', type=int, default=4, help='number of threads')
     sysbc_parser.add_argument('--tables', type=int, default=12, help='number of tables')
-    sysbc_parser.add_argument('--join-tables', type=int, default=6, help='number of tables to join for each query')
+    sysbc_parser.add_argument('--join-tables', type=int, default=4, help='number of tables to join for each query')
     sysbc_parser.add_argument('--table-size', type=int, default=100000, help='sysbench table size')
     sysbc_parser.add_argument('--warmup-time', type=int, default=0, help='sysbench warmup time')
     sysbc_parser.add_argument('--rand-type', default='zipfian')
