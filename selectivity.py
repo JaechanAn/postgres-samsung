@@ -141,7 +141,7 @@ class Client(threading.Thread):
         #self.cursor.execute('SET enable_indexscan = on;')
         #self.cursor.execute('SET enable_indexonlyscan = off;')
         #self.cursor.execute('SET enable_tidscan = off;')
-        #self.cursor.execute('SET enable_seqscan = off;')
+        self.cursor.execute('SET enable_seqscan = on;')
 
         with open(self.result_file, 'w') as f:
             epoch = time.perf_counter()
