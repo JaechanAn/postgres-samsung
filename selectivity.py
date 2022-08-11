@@ -32,7 +32,7 @@ def run_script(script, params, desc, stdout=subprocess.DEVNULL, stderr=subproces
     log('{} finished!'.format(desc))
 
 def create_config_file(config_file, new_config_file, args):
-    replacers = [['port = 5678', 'port = {}'.format(args.pgsql_port)]]
+    replacers = [['port = 5432', 'port = {}'.format(args.pgsql_port)]]
 
     # After init server, the config file is copied into the data directory
     with open(new_config_file, 'w') as new_config:
