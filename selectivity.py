@@ -134,14 +134,21 @@ class Client(threading.Thread):
     def run(self):
         self.db.autocommit = self.autocommit
 
-        self.cursor.execute('SET enable_mergejoin = off;')
+        self.cursor.execute('SET enable_mergejoin = on;')
         self.cursor.execute('SET enable_nestloop = off;')
-        self.cursor.execute('SET enable_hashjoin = on;')
-        self.cursor.execute('SET enable_bitmapscan = off;')
-        self.cursor.execute('SET enable_indexscan = off;')
-        self.cursor.execute('SET enable_indexonlyscan = off;')
-        self.cursor.execute('SET enable_tidscan = off;')
-        self.cursor.execute('SET enable_seqscan = on;')
+        self.cursor.execute('SET enable_hashjoin = off;')
+        #self.cursor.execute('SET enable_bitmapscan = off;')
+        #self.cursor.execute('SET enable_indexscan = off;')
+        #self.cursor.execute('SET enable_indexonlyscan = off;')
+        #self.cursor.execute('SET enable_tidscan = off;')
+        #self.cursor.execute('SET enable_seqscan = on;')
+
+        if self.client_id == 0 and self.autocommit == True:
+            with open('query_plan.data', 'w') as f:
+                self.cursor.execute('explain ' + self.make_query())
+                plan = self.cursor.fetchall()
+                for line in plan:
+                    f.write(line[0] + '\n')
 
         with open(self.result_file, 'w') as f:
             epoch = time.perf_counter()
@@ -418,7 +425,7 @@ def run_exp(args, mode):
     params = ['--bin-dir={}'.format(bin_dir),
               '--port={}'.format(args.pgsql_port),
               '--database={}'.format(args.pgsql_db)]
-    run_script(pg_hint_script, params, desc='Install pg_hint')
+    #run_script(pg_hint_script, params, desc='Install pg_hint')
 
     # Sysbench
     sys_worker = SysbenchWorker(sysbench_script=sysbench_script, sysbench_dir=sysbench_dir, result_file=sysbench_file, args=args)
