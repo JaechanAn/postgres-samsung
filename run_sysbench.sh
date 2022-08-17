@@ -27,7 +27,7 @@ PORT=5678 # If you change the port, you must change the postgresql.conf file in 
 
 TABLE_SIZE=10000
 TABLES=1
-TIME=3600
+TIME=61
 THREADS=96
 REPORT_INTERVAL=1
 SECONDARY=off
