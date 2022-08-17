@@ -36,6 +36,6 @@ do
 done
 
 # Create User & Database
-${BIN_DIR}/createuser ${USER} -d -h localhost -p ${PORT} -U $(whoami) -w
+#${BIN_DIR}/createuser ${USER} -d -h localhost -p ${PORT} -U $(whoami) -w
 ${BIN_DIR}/createdb -O ${USER} -h localhost -p ${PORT} -U ${USER} -w ${DATABASE}
 
